@@ -1,25 +1,26 @@
-import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import React, { useState } from "react";
+
 
 function App() {
+  const [firstDestination, setfirst] = useState("");
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Welcome to EcoWay</h1>
+      <h3>Our program uses Google Maps API to find the route find the smallest carbon footprint!</h3>
+
+     
+      <body>
+      <label>Starting Point:</label> 
+        <input></input><br></br> <br></br>
+        <label>End Point: </label>
+        <input></input>
+    </body>
+
     </div>
+    
   );
 }
 
