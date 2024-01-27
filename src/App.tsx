@@ -3,11 +3,37 @@ import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import MyMapCompnent from './MyMapComponent';
+import {
+  setKey,
+  setDefaults,
+  setLanguage,
+  setRegion,
+  fromAddress,
+  fromLatLng,
+  fromPlaceId,
+  setLocationType,
+  geocode,
+  RequestType,
+} from "react-geocode";
+
 
 function App() {
+  setKey("AIzaSyBVz2mqxc_sY4fsLefkHaSGNHValpgnaTE");
+  setLanguage("en");
+  setRegion("es");
   const [message, setMessage] = useState("");
   const [starting, setStarting] = useState("");
   const [ending, setEnding] = useState("");
+  
+  const [Starting_lat, setSL] = useState(1);
+  const [Starting_long, SetSLO] = useState(1);
+  const [Ending_lat, setEL] = useState(1);
+  const [Ending_long, setElO] = useState(1);
+
+  
+  let lats = 2;
+  let lgns = 3;
 
   useEffect(() => {
     fetch("http://localhost:9000/message")
@@ -17,24 +43,42 @@ function App() {
 
   const handleStartChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setStarting(event.target.value);
+    fromAddress(event.target.value)
+  .then(({ results }) => {
+    const { lat, lng } = results[0].geometry.location;
+    console.log(lat, lng);
+    setSL(lat);
+    SetSLO(lng)
+  })
+  .catch(console.error);
   };
 
   const handleEndChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEnding(event.target.value);
+    
+    fromAddress(event.target.value)
+    .then(({ results }) => {
+      const { lat, lng } = results[0].geometry.location;
+      console.log(lat, lng);
+      setEL(lat);
+      setElO(lng);
+    })
+    .catch(console.error);
+
   };
 
-  const handleClick = () => {
-    // Send data to the Express.js backend
-    axios.post('http://localhost:9000/route', { starting, ending })
-      .then(response => {
-        console.log(response.data);
-        // Handle response data here. e.g., setMessage(response.data.message);
-      })
-      .catch(err => {
-        console.log(err);
-        // Handle errors here, e.g., setMessage('An error occurred');
-      });
+  const handleClick = async () => {
+    try {
+      console.log(lats, ending);
+      const response = await axios.post('http://localhost:9000/route', { Starting_lat, Starting_long, Ending_lat, Ending_long });
+      console.log(response.data);
+      // Handle response data here, if needed
+    } catch (error) {
+      console.error('Error sending POST request:', error);
+      // Handle errors here, e.g., setMessage('An error occurred');
+    }
   };
+  
 
   return (
     <div className="App">
@@ -48,8 +92,15 @@ function App() {
         <Button variant="success" onClick={handleClick}>Calculate</Button>
         <p>Starting: {starting}</p>
         <p>Ending: {ending}</p> 
-        <p>Message: {message}</p>
+        <p>slat: {Starting_lat}</p>
+        <p>slong: {Starting_long}</p>
+        <p>elat: {Ending_lat}</p>
+        <p>elong: {Ending_long}</p>
+
       </div>
+        <body className="MapDiv">
+          <MyMapCompnent></MyMapCompnent>
+        </body>
     </div>
   );
 }
